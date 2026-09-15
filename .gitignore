@@ -219,3 +219,6 @@ __marimo__/
 
 # Project data
 data/
+
+# macOS system files
+.DS_Store
