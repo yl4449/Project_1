@@ -1,12 +1,13 @@
 # Project 1: Missing Data Reconstruction in Dairy Milking Records
 
 ## Project Overview
+
 The goal of this project is to reconstruct missing information in a large dairy milking dataset using the information available in complete records. The dataset contains approximately 8.5 million observations and 10 variables describing animal, lactation, reproductive, and milking-session characteristics. Initial data inspection identified substantial missingness in variables such as `AnimalNumber`, `LactationNumber`, `DaysInMilk`, and `ReproductionStatus`, while most milking-session variables are complete.
 The project will develop a reproducible workflow to identify missing data, evaluate possible reconstruction strategies, and recover as much missing information as reasonably possible while validating the accuracy of the approach.
 
 ## Development Environment
 
-The project will be conducted locally using Python and Jupyter Notebooks in Visual Studio Code. GitHub will be used for version control and project documentation. The raw dataset will remain local and will not be uploaded to the public repository.
+This project will be conducted locally on my computer using Python in Visual Studio Code as the primary IDE. Jupyter Notebooks within VS Code will be used for data inspection, cleaning, imputation, modeling, and validation. Git and GitHub will be used for version control and project documentation. Because the dataset is large and should not be included in the public repository, the raw data will be stored locally in the `data/` folder and excluded from GitHub through `.gitignore`.
 
 ## Data Management and Data Lineage
 
@@ -34,8 +35,9 @@ Files and folders will use lowercase `snake_case`. Notebooks will use numerical 
 
 ## Timeline
 
-Week 1: Set up repository, inspect data, and identify missing-data patterns 
-Week 2: Investigate data relationships and develop rule-based reconstruction methods 
-Week 3: Explore model-based imputation and compare alternative approaches 
-Week 4: Validate reconstruction methods, finalize the dataset, and document results 
-
+| Stage | Planned Work |
+|---|---|
+| Week 1 | Set up the public repository, inspect the dataset, and identify missing-data patterns |
+| Week 2 | Investigate relationships within the data and develop rule-based reconstruction methods |
+| Week 3 | Explore model-based imputation methods and compare alternative approaches |
+| Week 4 | Validate reconstruction methods, finalize the dataset, and document results |
