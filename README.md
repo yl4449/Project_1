@@ -9,29 +9,58 @@ The project will develop a reproducible workflow to identify missing data, evalu
 
 This project will be conducted locally on my computer using Python in Visual Studio Code as the primary IDE. Jupyter Notebooks within VS Code will be used for data inspection, cleaning, imputation, modeling, and validation. Git and GitHub will be used for version control and project documentation. Because the dataset is large and should not be included in the public repository, the raw data will be stored locally in the `data/` folder and excluded from GitHub through `.gitignore`.
 
+## Naming Convention
+
+Files and folders will use lowercase `snake_case`. Notebooks will use numerical prefixes to show workflow order, such as `01_data_inspection.ipynb`, `02_data_cleaning.ipynb`, and `03_imputation.ipynb`.
+
 ## Data Management and Data Lineage
 
 The raw dataset is stored locally in the `data/` directory, which is excluded from GitHub through `.gitignore`. The original data will remain unchanged. Processing steps will be documented so that the workflow from raw data to reconstructed data can be traced and reproduced.
 
 The planned data lineage is:
 
-Raw data → Data inspection → Missing-data assessment → Data cleaning → Imputation/reconstruction → Validation → Final dataset
+Raw data → Data inspection → Data processing → Data cleaning → Imputation/reconstruction → Validation → Final dataset
 
-## Analysis and Modeling Strategy
+### Data Cleaning Strategy
 
-I will first examine patterns of missingness and relationships among observations and variables. Because the dataset contains repeated milking records, I will first investigate whether missing values can be reconstructed using information from related records and logical relationships within the data.
+The dataset will be cleaned before modeling to improve data quality and reduce potential errors. The cleaning process include:
 
-Rule-based or deterministic reconstruction will be prioritized when values can be reliably inferred from existing records. For observations that cannot be reconstructed using these relationships, I will explore model-based imputation using available variables such as milk yield, milk flow, session duration, and milking number.
+- Standardizing variable names and converting `EventDate` to a datetime format.
 
-Different approaches may be required for different target variables. For example, `DaysInMilk` is numerical, while `LactationNumber` and `ReproductionStatus` may require discrete or classification-based approaches.
+- Removing exact duplicate rows.
+
+- Removing records where `avg_milk_flow` equals zero and null.
+
+- Identifying potential outliers using Z-scores, with observations beyond |Z| > 3 considered potential outliers. Removing rows that contain extreme outliers in selected continuous variables.
+
+### Train/Test Split Strategy
+
+Before splitting the data, observations with missing `animal_id` values will be removed because these records cannot be assigned to a specific animal and therefore cannot be included in an animal-level train/test split.
+
+The remaining cleaned dataset will then be divided into training and testing sets using `animal_id` as the grouping variable. Approximately 80% of the animals will be assigned to the training set and 20% to the testing set.
+
+All observations from the same animal will remain in the same dataset. This means that an animal appearing in the training set will not also appear in the testing set. After the split, the training and testing datasets will be checked to confirm that there is no overlap in `animal_id` and that the distributions of key variables and missing values are reasonably similar between the two sets.
+
+
+### Modeling Strategy
+
+Several modeling approaches will be explored and compared.
+
+A linear regression model will first be used as a baseline model because it is simple and easy to interpret.
+
+Additional machine learning models may include:
+
+- Random Forest Regression, which can capture nonlinear relationships and interactions among predictors.
+- Gradient Boosting models, which may improve predictive performance by sequentially correcting prediction errors.
+- Regularized regression methods such as Ridge or Lasso regression, which can help reduce overfitting and evaluate the importance of predictors.
+
+Model performance will be compared using appropriate evaluation metrics such as R-squared.
+
+The final model will be selected based on predictive performance, interpretability, and generalization to the test dataset.
 
 ## Testing and Validation
 
 Imputation methods will be evaluated using observations with known values. A subset of known values can be temporarily masked and reconstructed using the proposed method. The reconstructed values will then be compared with the original values using appropriate evaluation metrics. This will help determine whether a method is sufficiently accurate before applying it to truly missing observations.
-
-## Naming Convention
-
-Files and folders will use lowercase `snake_case`. Notebooks will use numerical prefixes to show workflow order, such as `01_data_inspection.ipynb`, `02_data_cleaning.ipynb`, and `03_imputation.ipynb`.
 
 ## Timeline
 
