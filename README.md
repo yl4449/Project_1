@@ -35,32 +35,44 @@ The dataset will be cleaned before modeling to improve data quality and reduce p
 
 ### Train/Test Split Strategy
 
-Before splitting the data, observations with missing `animal_id` values will be removed because these records cannot be assigned to a specific animal and therefore cannot be included in an animal-level train/test split.
+The dataset will first be separated into two groups: records with a known `animal_id` and records with a missing `animal_id`.
 
-The remaining cleaned dataset will then be divided into training and testing sets using `animal_id` as the grouping variable. Approximately 80% of the animals will be assigned to the training set and 20% to the testing set.
+Only records with known animal IDs will initially be used for model development because their true identities are available for training and evaluation.
 
-All observations from the same animal will remain in the same dataset. This means that an animal appearing in the training set will not also appear in the testing set. After the split, the training and testing datasets will be checked to confirm that there is no overlap in `animal_id` and that the distributions of key variables and missing values are reasonably similar between the two sets.
+The known-ID records will be sorted chronologically by `EventDate`. The data will then be divided into training, validation, and testing sets using a time-based split:
+
+- Approximately 70% of the earlier records will be used as the training set.
+- Approximately 10% of the following records will be used as the validation set.
+- Approximately 20% of the most recent records will be reserved as the test set.
+
+Using a chronological split helps prevent data leakage because the model will be trained on earlier observations and evaluated on later observations that were not available during training.
+
+The distribution of important variables and missing-value patterns will also be checked across the training, validation, and test sets to make sure that the datasets are reasonably comparable.
 
 
 ### Modeling Strategy
 
-Several modeling approaches will be explored and compared.
+The main modeling goal is to learn patterns from records with known animal IDs and use those patterns to help identify the most likely animal associated with records where `animal_id` is missing.
 
-A linear regression model will first be used as a baseline model because it is simple and easy to interpret.
+The model will use information such as `EventDate`, milk production variables, milking characteristics, lactation information, and other available cow-level variables to learn temporal and production patterns for individual animals.
 
-Additional machine learning models may include:
+Several modeling approaches will be explored and compared. A simple baseline model will first be developed to provide a reference for performance. Additional machine learning methods may include Random Forest and Gradient Boosting models because they can capture nonlinear relationships and interactions among multiple predictors.
 
-- Random Forest Regression, which can capture nonlinear relationships and interactions among predictors.
-- Gradient Boosting models, which may improve predictive performance by sequentially correcting prediction errors.
-- Regularized regression methods such as Ridge or Lasso regression, which can help reduce overfitting and evaluate the importance of predictors.
+The model will be trained using only the training dataset. The validation dataset will be used to compare modeling approaches and tune model settings. After the final model is selected, it will be applied to the test dataset for final performance evaluation.
 
-Model performance will be compared using appropriate evaluation metrics such as R-squared.
-
-The final model will be selected based on predictive performance, interpretability, and generalization to the test dataset.
+If model performance is acceptable, the final trained model will then be used to estimate the most likely animal identity for records where `animal_id` is missing.
 
 ## Testing and Validation
 
-Imputation methods will be evaluated using observations with known values. A subset of known values can be temporarily masked and reconstructed using the proposed method. The reconstructed values will then be compared with the original values using appropriate evaluation metrics. This will help determine whether a method is sufficiently accurate before applying it to truly missing observations.
+Model performance will be evaluated using the validation and test datasets containing records with known animal IDs.
+
+During validation, the true `animal_id` values will be retained for comparison but will not be used as predictors. The model will predict which animal is most likely associated with each observation, and the predictions will be compared with the known animal IDs.
+
+The validation set will be used during model development to compare different modeling techniques and adjust model settings. The test set, which contains the most recent observations, will be reserved for the final evaluation and will not be used during model training or tuning.
+
+Performance will be assessed using classification metrics such as overall accuracy and, if appropriate, precision, recall, and confusion matrices. Model errors will also be examined to determine whether certain animals or time periods are more difficult to identify.
+
+After the model has been validated and tested on records with known animal IDs, it can be applied to observations with missing `animal_id` values. Predictions with low confidence may be flagged for further review rather than automatically assigning an animal identity.
 
 ## Timeline
 
