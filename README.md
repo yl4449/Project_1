@@ -44,9 +44,9 @@ Additional features are derived from existing data:
 - Event month, day of year, weekday, and year.
 - **Estimated calving date = milking date − days in milk.** Records from the same cow within the same lactation should have similar estimated calving dates.
 
-Random Forest was explored initially. K-nearest neighbors (KNN) was selected because it ran faster in this project, allowing a larger training sample.
+Random Forest was explored initially. KNN was selected because it ran faster in this project, allowing a larger training sample.
 
-The final approach uses standardized features and **KNN with K = 1**, assigning each record the animal ID of its nearest training record. Model development included increasing the records sampled per cow and adjusting the weight of the estimated calving date feature.
+The final approach uses standardized features and **KNN with K = 7**, assigning each record the animal ID of its nearest training record. Model development included increasing the records sampled per cow and adjusting the weight of the estimated calving date feature.
 
 ## Evaluation and Limitations
 
@@ -76,7 +76,7 @@ Raw data → Inspection → Cleaning → Known/missing-ID separation → Chronol
 
 ### Real World Application Reflection
 
-I applied my saved KNN model to the first five records in PracticeTest.csv without changing the model or filling in missing values. Prediction failed because KNN does not accept NaN values. My model requires days_in_milk, lactation_number, and reproduction_status, which are missing in the new dataset. Some event_date is also missing, so estimated_calving_day cannot be calculated. I had assigned this feature a particularly large weight in the distance calculation.
+I applied my saved KNN model to the first five records in PracticeTest.csv without changing the model or filling in missing values. Prediction failed because KNN does not accept NaN values. My model requires days_in_milk, lactation_number, and reproduction_status, which are missing in the new dataset. Since Days_In_Milk is missing, so estimated_calving_day cannot be calculated. I had assigned this feature a particularly large weight in the distance calculation.
 
 This revealed a limitation in my feature selection: I used information available in the labeled data without checking whether it would be available for the records requiring Animal ID prediction. Therefore, my current model cannot perform its intended task. A good model should use predictors available at prediction time and be evaluated under conditions that reflect its actual use. Validation accuracy alone does not establish practical usefulness.
 
