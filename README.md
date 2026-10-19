@@ -73,3 +73,13 @@ Raw data → Inspection → Cleaning → Known/missing-ID separation → Chronol
 | Week 2 | Investigate relationships within the data and develop rule-based reconstruction methods |
 | Week 3 | Explore model-based imputation methods and compare alternative approaches |
 | Week 4 | Validate reconstruction methods, finalize the dataset, and document results |
+
+### Real World Application Reflection
+
+I applied my saved KNN model to the first five records in PracticeTest.csv without changing the model or filling in missing values. Prediction failed because KNN does not accept NaN values. My model requires days_in_milk, lactation_number, and reproduction_status, which are missing in the new dataset. Some event_date is also missing, so estimated_calving_day cannot be calculated. I had assigned this feature a particularly large weight in the distance calculation.
+
+This revealed a limitation in my feature selection: I used information available in the labeled data without checking whether it would be available for the records requiring Animal ID prediction. Therefore, my current model cannot perform its intended task. A good model should use predictors available at prediction time and be evaluated under conditions that reflect its actual use. Validation accuracy alone does not establish practical usefulness.
+
+### Future Model Improvements
+
+If I could revise the model, I would retrain KNN using only available milk measurements, milking session, and date features. My hyperparameter tuning process would involve comparing parameter combinations and then evaluating feature weights using the validation set. After selecting the settings, I would evaluate the final model on a held-out test set and flag uncertain predictions for review.
